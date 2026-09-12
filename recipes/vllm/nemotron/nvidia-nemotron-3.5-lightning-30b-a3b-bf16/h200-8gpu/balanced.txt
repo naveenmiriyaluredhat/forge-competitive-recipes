@@ -1,0 +1,10 @@
+scenario: balanced
+# sha: d896e57f8097d1f275300d22114b4ca0a7686e85
+vllm serve nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16 \
+  --mamba-backend flashinfer \
+  --mamba-cache-mode align \
+  --enable-prefix-caching \
+  --max-num-batched-tokens 16384 \
+  --moe-backend flashinfer_cutlass \
+  --enable-expert-parallel \
+  --tensor-parallel-size 8

@@ -1,0 +1,8 @@
+cluster: zeus
+cluster_preset: zeus
+namespace: psap-automation
+gpu_type: h200
+owner: nmiriyal
+images:
+  vllm: vllm/vllm-openai:v0.29.0
+  sglang: lmsysorg/sglang:v0.5.18

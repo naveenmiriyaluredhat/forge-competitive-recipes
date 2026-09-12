@@ -1,0 +1,5 @@
+scenario: low-latency
+vllm serve google/gemma-4-31B-it-qat-w4a16-ct \
+  --tensor-parallel-size 1 \
+  --language-model-only \
+  --enable-prefix-caching 

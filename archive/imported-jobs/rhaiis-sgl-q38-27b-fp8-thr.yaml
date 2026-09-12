@@ -1,0 +1,62 @@
+# scenario: throughput
+apiVersion: fournos.dev/v1
+kind: FournosJob
+metadata:
+  generateName: rhaiis-sgl-q38-27b-fp8-thr-
+spec:
+  owner: nmiriyal
+  displayName: rhaiis-sgl-q38-27b-fp8-thr
+  pipeline: forge-full
+  exclusive: false
+  cluster: zeus
+  priority: manual
+  hardware:
+    gpuType: h200
+    gpuCount: 1
+  secretRefs:
+  - psap-forge-dashboard-s3
+  - psap-forge-notifications
+  executionEngine:
+    forge:
+      project: rhaiis
+      args:
+        - nvidia
+        - sglang
+        - zeus
+        - profile4
+        - profile6
+      configOverrides:
+        tests.rhaiis.run_benchmark: true
+        tests.rhaiis.slack_user: "U08RXCZRRNF"
+        tests.rhaiis.slack_notify_always: true
+        caliper.postprocess.csv_dashboard.enabled: true
+        rhaiis.profiler.enabled: true
+        rhaiis.agent_analysis.enabled: false
+        rhaiis.deploy.image_pull_secrets: ["npalaska-image-pull"]
+
+        benchmarks.guidellm.fs_group: 0
+        tests.rhaiis.warmup: true
+
+        rhaiis.engines.sglang.images.nvidia: "lmsysorg/sglang:v0.5.18"
+        tests.rhaiis.version: "sglang-0.5.18-recipe-throughput-oriented"
+
+        tests.rhaiis.model_key: custom
+        rhaiis.engine: sglang
+        models.custom.hf_model_id: "Qwen/Qwen3.8-27B-FP8"
+        rhaiis.engines.sglang.args.trust-remote-code: true
+        rhaiis.engines.sglang.args.kv-cache-dtype: "fp8_e4m3"
+        rhaiis.engines.sglang.args.mem-fraction-static: 0.85
+        rhaiis.engines.sglang.args.attention-backend: "flashinfer"
+        rhaiis.engines.sglang.args.chunked-prefill-size: 32768
+        rhaiis.engines.sglang.args.max-prefill-tokens: 32768
+        rhaiis.engines.sglang.args.mamba-full-memory-ratio: 3.67
+        rhaiis.engines.sglang.args.mamba-radix-cache-strategy: "extra_buffer_lazy"
+        rhaiis.engines.sglang.args.mamba-ssm-dtype: "float32"
+        rhaiis.engines.sglang.args.tp-size: 1
+
+        tests.rhaiis.workload_keys: ["profile4"]
+        workloads.profile4.rates: [1,2,4,8,16,32,64,128,256]
+        workloads.profile4.max_seconds: 450
+        workloads.profile4.rampup: 0
+  env:
+    PULL_PULL_SHA: "forge-rhaiis-v0.0.6"

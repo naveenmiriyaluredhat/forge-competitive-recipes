@@ -1,0 +1,12 @@
+scenario: low-latency
+sglang serve \
+  --trust-remote-code \
+  --model-path Qwen/Qwen3.8-27B \
+  --kv-cache-dtype fp8_e4m3 \
+  --mem-fraction-static 0.85 \
+  --attention-backend flashinfer \
+  --chunked-prefill-size 32768 \
+  --max-prefill-tokens 32768 \
+  --mamba-full-memory-ratio 4.59 \
+  --mamba-radix-cache-strategy extra_buffer \
+  --mamba-ssm-dtype float32

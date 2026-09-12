@@ -1,0 +1,6 @@
+scenario: low-latency
+vllm serve RedHatAI/gemma-4-31B-it-FP8-dynamic \
+  --kv-cache-dtype fp8 \
+  --tensor-parallel-size 1 \
+  --language-model-only \
+  --enable-prefix-caching

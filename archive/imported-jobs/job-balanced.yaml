@@ -1,0 +1,51 @@
+apiVersion: fournos.dev/v1
+kind: FournosJob
+metadata:
+  generateName: rhaiis-benchmark-naveen-recipes-gemma-
+spec:
+  owner: nmiriyal
+  displayName: rhaiis-hera-benchmark-mf-port
+  pipeline: forge-full
+  exclusive: false
+  cluster: hera
+  priority: manual
+  hardware:
+    gpuType: h200
+    gpuCount: 1
+  secretRefs:
+  - psap-forge-dashboard-s3
+  - psap-forge-notifications
+  executionEngine:
+    forge:
+      project: rhaiis
+      args: [nvidia]
+      configOverrides:
+        tests.rhaiis.model_key: gemma-4-26b-a4b
+        rhaiis.engines.vllm.images.nvidia: vllm/vllm-openai:v0.27.0
+        tests.rhaiis.run_benchmark: true
+        tests.rhaiis.warmup: true
+        tests.rhaiis.version: "vLLM-0.27.0-recipe-balanced"
+        tests.rhaiis.slack_user: "U08RXCZRRNF"
+        tests.rhaiis.slack_notify_always: true
+        #tests.rhaiis.compare_version: "vLLM-0.20.0"
+
+        tests.rhaiis.workload_keys: ["profile1"]
+        rhaiis.profiler.enabled: true
+        caliper.postprocess.csv_dashboard.enabled: true
+        rhaiis.agent_analysis.enabled: false
+        rhaiis.engines.vllm.args.tensor-parallel-size: 1
+        rhaiis.engines.vllm.args.lanaguage-mode-only: true
+        rhaiis.cluster_tag: "hera2"
+        rhaiis.deploy.image_pull_secrets: ["npalaska-image-pull"]
+        benchmarks.guidellm.fs_group: 0
+        workloads.profile1.rates: [1,2,5,10,15,20,25,50,100,200]
+        workloads.profile1.max_seconds: 300
+        workloads.profile1.rampup: 0
+        workloads.profile2.rates: [1,5]
+        workloads.profile2.max_seconds: 300
+        workloads.profile2.rampup: 0
+        workloads.profile4.rates: [1,5]
+        workloads.profile4.max_seconds: 300
+        workloads.profile4.rampup: 0
+  env:
+    PULL_PULL_SHA: "5c929cb852a62f457c05c55d811c8f950325388d"

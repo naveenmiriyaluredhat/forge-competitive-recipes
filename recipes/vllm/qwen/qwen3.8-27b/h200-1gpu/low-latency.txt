@@ -1,0 +1,5 @@
+scenario: low-latency
+vllm serve Qwen/Qwen3.8-27B \
+  --tensor-parallel-size 1 \
+  --language-model-only \
+  --enable-prefix-caching

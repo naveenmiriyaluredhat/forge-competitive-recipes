@@ -1,0 +1,6 @@
+scenario: balanced
+vllm serve poolside/Laguna-S-2.1 \
+  --trust-remote-code \
+  --enable-prefix-caching \
+  --enable-expert-parallel \
+  --tensor-parallel-size 8

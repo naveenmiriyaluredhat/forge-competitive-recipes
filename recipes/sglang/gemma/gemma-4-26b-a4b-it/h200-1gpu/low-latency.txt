@@ -1,0 +1,5 @@
+scenario: low-latency
+# Sample SGLang recipe — host/port are ignored (KServe sets those).
+sglang serve --model-path google/gemma-4-26B-A4B-it \
+  --mem-fraction-static 0.85 \
+  --host 0.0.0.0 --port 30000

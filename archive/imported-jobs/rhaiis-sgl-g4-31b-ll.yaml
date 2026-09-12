@@ -1,0 +1,55 @@
+# scenario: low-latency
+apiVersion: fournos.dev/v1
+kind: FournosJob
+metadata:
+  generateName: rhaiis-sgl-g4-31b-ll-
+spec:
+  owner: nmiriyal
+  displayName: rhaiis-sgl-g4-31b-ll
+  pipeline: forge-full
+  exclusive: false
+  cluster: zeus
+  priority: manual
+  hardware:
+    gpuType: h200
+    gpuCount: 1
+  secretRefs:
+  - psap-forge-dashboard-s3
+  - psap-forge-notifications
+  executionEngine:
+    forge:
+      project: rhaiis
+      args:
+        - nvidia
+        - sglang
+        - zeus
+        - profile4
+        - profile6
+      configOverrides:
+        tests.rhaiis.run_benchmark: true
+        tests.rhaiis.slack_user: "U08RXCZRRNF"
+        tests.rhaiis.slack_notify_always: true
+        caliper.postprocess.csv_dashboard.enabled: true
+        rhaiis.profiler.enabled: true
+        rhaiis.agent_analysis.enabled: false
+        rhaiis.deploy.image_pull_secrets: ["npalaska-image-pull"]
+
+        benchmarks.guidellm.fs_group: 0
+        tests.rhaiis.warmup: true
+
+        rhaiis.engines.sglang.images.nvidia: "lmsysorg/sglang:v0.5.18"
+        tests.rhaiis.version: "sglang-0.5.18-recipe-latency-oriented"
+
+        tests.rhaiis.model_key: custom
+        rhaiis.engine: sglang
+        models.custom.hf_model_id: "google/gemma-4-31B-it"
+        rhaiis.engines.sglang.args.tp-size: 1
+        rhaiis.engines.sglang.args.enable-metrics: true
+        rhaiis.engines.sglang.args.mem-fraction-static: 0.85
+
+        tests.rhaiis.workload_keys: ["profile4"]
+        workloads.profile4.rates: [1,2,4,8,16,32,64,128,256]
+        workloads.profile4.max_seconds: 450
+        workloads.profile4.rampup: 0
+  env:
+    PULL_PULL_SHA: "forge-rhaiis-v0.0.6"

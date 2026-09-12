@@ -1,0 +1,53 @@
+apiVersion: fournos.dev/v1
+kind: FournosJob
+metadata:
+  generateName: rhaiis-benchmark-naveen-recipes-sglang-
+spec:
+  owner: nmiriyal
+  displayName: rhaiis-zeus-recipes-sglang
+  pipeline: forge-full
+  exclusive: false
+  cluster: zeus
+  priority: manual
+  hardware:
+    gpuType: h200
+    gpuCount: 1
+  secretRefs:
+  - psap-forge-dashboard-s3
+  - psap-forge-notifications
+  executionEngine:
+    forge:
+      project: rhaiis
+      args:
+        - nvidia
+        - sglang
+        - zeus
+        - profile4
+      configOverrides:
+        #tests.rhaiis.model_key: gpt-oss-120b
+        rhaiis.engines.sglang.images.nvidia: lmsysorg/sglang:v0.5.18
+        tests.rhaiis.run_benchmark: true
+        tests.rhaiis.warmup: true
+        tests.rhaiis.version: "sglang-0.5.18-recipe-latency-oriented"
+        tests.rhaiis.slack_user: "U08RXCZRRNF"
+        tests.rhaiis.slack_notify_always: true
+        #tests.rhaiis.compare_version: "vLLM-0.20.0"
+
+        rhaiis.engine: sglang
+        tests.rhaiis.workload_keys: ["profile4"]
+        rhaiis.profiler.enabled: false
+        caliper.postprocess.csv_dashboard.enabled: true
+        rhaiis.agent_analysis.enabled: false
+        rhaiis.engines.sglang.args.tp-size: 1
+        rhaiis.engines.sglang.args.disable-radix-cache: true
+        rhaiis.deploy.image_pull_secrets: ["npalaska-image-pull"]
+        benchmarks.guidellm.fs_group: 0
+        workloads.profile1.rates: [1,2,5,10,15,20,25,50,100,200,250,300]
+        workloads.profile1.max_seconds: 450
+        workloads.profile1.rampup: 0
+        workloads.profile4.rates: [1,2,5,10,15,20,25,50,100,200,250,300]
+        workloads.profile4.max_seconds: 450
+        workloads.profile4.rampup: 0
+        models.custom.hf_model_id: google/gemma-4-26B-A4B-it
+  env:
+    PULL_PULL_SHA: "2fdde7605ae5817792c78d1e464d4a56ae7069a6"

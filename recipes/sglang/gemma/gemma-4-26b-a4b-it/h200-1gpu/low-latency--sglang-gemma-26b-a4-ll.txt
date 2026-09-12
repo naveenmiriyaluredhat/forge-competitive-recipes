@@ -1,0 +1,3 @@
+scenario: low-latency
+sglang serve --model-path google/gemma-4-26B-A4B-it \
+  --mem-fraction-static 0.85 

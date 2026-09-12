@@ -1,0 +1,5 @@
+scenario: low-latency
+sglang serve \
+  --model-path meta-models/Muse-Glimmer-30B \
+  --mem-fraction-static 0.85 \
+  --language-model-only

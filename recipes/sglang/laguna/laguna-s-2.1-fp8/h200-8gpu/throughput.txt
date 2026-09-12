@@ -1,0 +1,5 @@
+scenario: throughput
+sglang serve \
+  --model-path poolside/Laguna-S-2.1-FP8 \
+  --trust-remote-code \
+  --tp 8 \

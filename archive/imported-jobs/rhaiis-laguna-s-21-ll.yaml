@@ -1,0 +1,58 @@
+# scenario: low-latency
+apiVersion: fournos.dev/v1
+kind: FournosJob
+metadata:
+  generateName: rhaiis-laguna-s-21-ll-
+spec:
+  owner: nmiriyal
+  displayName: rhaiis-laguna-s-21-ll
+  pipeline: forge-full
+  exclusive: false
+  cluster: zeus
+  priority: manual
+  hardware:
+    gpuType: h200
+    gpuCount: 8
+  secretRefs:
+  - psap-forge-dashboard-s3
+  - psap-forge-notifications
+  executionEngine:
+    forge:
+      project: rhaiis
+      args:
+        - nvidia
+        - vllm
+        - zeus
+        - profile4
+        - profile6
+      configOverrides:
+        tests.rhaiis.run_benchmark: true
+        tests.rhaiis.slack_user: "U08RXCZRRNF"
+        tests.rhaiis.slack_notify_always: true
+        caliper.postprocess.csv_dashboard.enabled: true
+        rhaiis.profiler.enabled: true
+        rhaiis.agent_analysis.enabled: false
+        rhaiis.deploy.image_pull_secrets: ["npalaska-image-pull"]
+
+        benchmarks.guidellm.fs_group: 0
+        tests.rhaiis.warmup: true
+
+        rhaiis.engines.vllm.images.nvidia: "vllm/vllm-openai:v0.29.0"
+        tests.rhaiis.version: "vLLM-0.29.0-recipe-latency-oriented"
+
+        tests.rhaiis.model_key: custom
+        rhaiis.engine: vllm
+        models.custom.hf_model_id: "poolside/Laguna-S-2.1"
+        rhaiis.engines.vllm.args.trust-remote-code: true
+        rhaiis.engines.vllm.args.enable-prefix-caching: true
+        rhaiis.engines.vllm.args.tensor-parallel-size: 8
+
+        tests.rhaiis.workload_keys: ["profile4","profile6"]
+        workloads.profile4.rates: [1,2,4,8,16,32,64,128,256]
+        workloads.profile4.max_seconds: 450
+        workloads.profile4.rampup: 0
+        workloads.profile6.rates: [1,2,4,8,16,32,64,128,256]
+        workloads.profile6.max_seconds: 450
+        workloads.profile6.rampup: 0
+  env:
+    PULL_PULL_SHA: "2fdde7605ae5817792c78d1e464d4a56ae7069a6"

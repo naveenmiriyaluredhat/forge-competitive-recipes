@@ -1,0 +1,7 @@
+scenario: balanced
+sha: e9fe12bfbee222ab45d0ce1daa085f241b8ed9f2
+vllm serve google/gemma-4-26B-A4B-it \
+  --enable-expert-parallel \
+  --enable-prefix-caching \
+  --tensor-parallel-size 8 \
+  --language-model-only

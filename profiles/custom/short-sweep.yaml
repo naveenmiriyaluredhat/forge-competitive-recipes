@@ -1,0 +1,8 @@
+# Example: same Forge workloads with shorter, lower-rate measurement.
+workloads: [profile4, profile6]
+rates: [1, 4, 16]
+max_seconds: 120
+rampup: 0
+warmup: true
+config_overrides:
+  workloads.profile6.max_seconds: 180

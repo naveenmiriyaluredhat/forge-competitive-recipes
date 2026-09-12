@@ -1,0 +1,14 @@
+scenario: low-latency
+vllm serve nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4 \
+  --mamba-backend flashinfer \
+  --mamba-cache-mode align \
+  --enable-prefix-caching \
+  --kv-cache-dtype fp8 \
+  --tensor-parallel-size 1 \
+  --quantization modelopt_fp4 \
+  --moe-backend humming \
+  --linear-backend humming \
+  --mamba-ssu-algorithm horizontal \
+  --async-scheduling \
+  --max-num-seqs 256 \
+  --max-num-batched-tokens 32768

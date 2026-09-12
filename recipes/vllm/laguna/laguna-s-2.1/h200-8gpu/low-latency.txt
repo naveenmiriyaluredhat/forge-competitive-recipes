@@ -1,0 +1,5 @@
+scenario: low-latency
+vllm serve poolside/Laguna-S-2.1 \
+  --trust-remote-code \
+  --enable-prefix-caching \
+  --tensor-parallel-size 8

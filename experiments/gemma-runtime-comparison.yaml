@@ -1,0 +1,4 @@
+family: gemma
+scenario: low-latency
+profile: profiles/standard/profile4-profile6.yaml
+environment: environments/zeus.yaml

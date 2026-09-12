@@ -1,0 +1,8 @@
+scenario: balanced
+sha: forge-rhaiis-v0.0.6
+vllm serve RedHatAI/gemma-4-26B-A4B-it-FP8-dynamic \
+  --kv-cache-dtype fp8 \
+  --enable-expert-parallel \
+  --enable-prefix-caching \
+  --tensor-parallel-size 8 \
+  --language-model-only
