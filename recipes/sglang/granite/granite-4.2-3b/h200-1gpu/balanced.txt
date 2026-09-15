@@ -1,0 +1,5 @@
+scenario: balanced
+sglang serve \
+  --model-path ibm-granite/granite-4.2-3b \
+  --tp 1 \
+  --mem-fraction-static 0.8

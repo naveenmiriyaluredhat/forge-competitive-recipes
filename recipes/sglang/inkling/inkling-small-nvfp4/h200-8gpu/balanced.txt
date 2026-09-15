@@ -1,0 +1,16 @@
+scenario: balanced
+export SGLANG_ENABLE_UNIFIED_RADIX_TREE=1
+sglang serve \
+  --trust-remote-code \
+  --model-path thinkingmachines/Inkling-Small-NVFP4 \
+  --tp 8 \
+  --quantization modelopt_fp4 \
+  --attention-backend fa4 \
+  --page-size 128 \
+  --fp4-gemm-backend marlin \
+  --moe-runner-backend marlin \
+  --enable-torch-symm-mem \
+  --mamba-radix-cache-strategy extra_buffer \
+  --mem-fraction-static 0.85 \
+  --swa-full-tokens-ratio 0.1 \
+  --mamba-full-memory-ratio 0.1

@@ -117,6 +117,7 @@ parse_recipe() {
   VERSION=""
   GPU_COUNT=""
   SERVE_LINES=()
+  RECIPE_ENVS=()
   local IN_SERVE=0 line trimmed key
 
   while IFS= read -r line || [[ -n "$line" ]]; do
@@ -125,6 +126,16 @@ parse_recipe() {
 
     if [[ $IN_SERVE -eq 0 ]]; then
       [[ -z "$trimmed" || "$trimmed" == \#* ]] && continue
+    fi
+
+    if [[ $IN_SERVE -eq 0 && "$trimmed" == export\ * ]]; then
+      local assignment="${trimmed#export }"
+      if [[ ! "$assignment" =~ ^[A-Za-z_][A-Za-z0-9_]*=[A-Za-z0-9_./:-]+$ ]]; then
+        echo "ERROR: $recipe_txt: exports must be literal NAME=value assignments (no shell expansion)" >&2
+        return 1
+      fi
+      RECIPE_ENVS+=("$assignment")
+      continue
     fi
 
     key="$(echo "$trimmed" | sed -E 's/^([^:]+:).*/\1/' | tr '[:upper:]' '[:lower:]')"
@@ -202,6 +213,8 @@ process_one() {
   [[ -n "$IMAGE" ]] && ARGS+=(--image "$IMAGE")
   [[ -n "$VERSION" ]] && ARGS+=(--version "$VERSION")
   [[ -n "$GPU_COUNT" ]] && ARGS+=(--gpu-count "$GPU_COUNT")
+  local env_assignment
+  for env_assignment in "${RECIPE_ENVS[@]}"; do ARGS+=(--env "$env_assignment"); done
   ARGS+=("${PASSTHRU[@]+"${PASSTHRU[@]}"}")
 
   # Always write a file (needed for launch); auto-name unless single explicit -o FILE

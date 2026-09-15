@@ -36,7 +36,13 @@ def recipe_info(path):
     engine = tokens[0]
     model = tokens[2] if engine == 'vllm' else tokens[tokens.index('--model-path') + 1]
     model_name = model.split('/')[-1].lower()
-    family = next((f for f in ('gemma', 'nemotron', 'qwen', 'laguna', 'glm', 'muse') if f in model_name), None)
+    families = ('gemma', 'nemotron', 'qwen', 'laguna', 'glm', 'muse', 'meta', 'kimi', 'inkling', 'granite')
+    relative = path.relative_to(ROOT / 'recipes')
+    folder_family = relative.parts[1] if len(relative.parts) > 2 else None
+    family = folder_family if folder_family in families else next(
+        (f for f in families if f in model_name), None)
+    if family is None and model.split('/')[0].lower() in ('meta', 'meta-llama', 'meta-models'):
+        family = 'meta'
     if family is None:
         raise ValueError(f'{path}: unknown family; extend recipe_info family mapping')
     scenario = re.search(r'^scenario:\s*(\S+)', text, re.M)

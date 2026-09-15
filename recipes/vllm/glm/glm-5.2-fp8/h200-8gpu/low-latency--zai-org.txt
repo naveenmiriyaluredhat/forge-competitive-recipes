@@ -1,0 +1,5 @@
+scenario: low-latency
+vllm serve zai-org/GLM-5.2-FP8 \
+  --tensor-parallel-size 8 \
+  --kv-cache-dtype fp8 \
+  --enable-prefix-caching

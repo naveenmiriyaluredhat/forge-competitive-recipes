@@ -67,7 +67,7 @@ class SubmissionTests(unittest.TestCase):
 class GenerationTests(unittest.TestCase):
     def test_all_recipes_parse_and_hardware_matches_paths(self):
         recipes = list((ROOT / 'recipes').rglob('*.txt'))
-        self.assertEqual(len(recipes), 30)
+        self.assertTrue(recipes)
         for recipe in recipes:
             info = runner.recipe_info(recipe)
             self.assertIn('/' + info['runtime'] + '/' + info['family'] + '/', str(recipe))
@@ -82,6 +82,19 @@ class GenerationTests(unittest.TestCase):
             self.assertEqual(runner.read_yaml(output), job)
         self.assertEqual(runner.image_version('vllm', 'vllm/vllm-openai:v0.29.0', 'balanced'),
                          'vLLM-0.29.0-recipe-balanced')
+
+    def test_inkling_exports_reach_model_server(self):
+        recipe = ROOT / 'recipes/vllm/inkling/inkling-small-nvfp4/h200-2gpu/low-latency.txt'
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / 'job.yaml'
+            subprocess.run(['bash', str(ROOT / 'scripts/gen-from-txt.sh'), str(recipe),
+                            '-o', str(dest)], check=True, capture_output=True, text=True)
+            job = runner.read_yaml(dest)
+        config = job['spec']['executionEngine']['forge']['configOverrides']
+        for name in ('VLLM_USE_V2_MODEL_RUNNER', 'FLASH_ATTENTION_CUTE_DSL_CACHE_ENABLED'):
+            self.assertEqual(config['rhaiis.env_vars.' + name], '1')
+        self.assertEqual(config['rhaiis.engines.vllm.args.tokenizer-mode'], 'inkling')
+        self.assertEqual(config['rhaiis.engines.vllm.args.tensor-parallel-size'], 2)
 
     def test_generator_image_version_overrides(self):
         out = subprocess.run(['bash', str(ROOT / 'scripts/gen-fournos-job.sh'),

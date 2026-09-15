@@ -29,6 +29,7 @@ Optional:
   --engine NAME           vllm | sglang (auto-detected from --from-serve)
   --scenario NAME         low-latency | balanced | throughput
                           Tags tests.rhaiis.version (e.g. …-latency-oriented)
+  --env NAME=VALUE       Model-server environment variable (repeatable)
   --arg KEY=VALUE         Engine arg (repeatable). Replaces same key if repeated.
   --tp N                  Shorthand: tensor-parallel-size (vllm) or tp-size (sglang)
   --gpu-count N           hardware.gpuCount (default: TP from serve cmd, else 1)
@@ -341,6 +342,7 @@ CLI_ENGINE=""
 CLI_TP=""
 CLI_WORKLOADS=()
 CLI_ENGINE_ARGS=()
+CLI_SERVER_ENVS=()
 SERVE_MODEL=""
 SERVE_ENGINE_ARGS=()
 SERVE_TP=""
@@ -438,6 +440,15 @@ EOF
     printf '        rhaiis.engines.%s.args.%s: %s\n' "$ENGINE" "$key" "$(yaml_quote "$val")"
   done
 
+  for arg in "${CLI_SERVER_ENVS[@]}"; do
+    key="${arg%%=*}"
+    val="${arg#*=}"
+    # Always quote env values: Kubernetes environment values are strings.
+    val="${val//\\/\\\\}"
+    val="${val//\"/\\\"}"
+    printf '        rhaiis.env_vars.%s: "%s"\n' "$key" "$val"
+  done
+
   printf '\n'
   printf '        tests.rhaiis.workload_keys: ['
   first=1
@@ -469,6 +480,7 @@ while [[ $# -gt 0 ]]; do
     --from-serve) FROM_SERVE="$2"; shift 2 ;;
     --model) CLI_MODEL="$2"; shift 2 ;;
     --engine) CLI_ENGINE="$2"; shift 2 ;;
+    --env) CLI_SERVER_ENVS+=("$2"); shift 2 ;;
     --arg) CLI_ENGINE_ARGS+=("$2"); shift 2 ;;
     --tp) CLI_TP="$2"; shift 2 ;;
     --gpu-count) CLI_GPU="$2"; shift 2 ;;
@@ -582,6 +594,13 @@ if [[ -z "$MODEL_ID" ]]; then
   echo "ERROR: MODEL_ID required (--from-serve, --model, or MODEL_ID in recipe)" >&2
   exit 1
 fi
+
+for server_env in "${CLI_SERVER_ENVS[@]}"; do
+  if [[ ! "$server_env" =~ ^[A-Za-z_][A-Za-z0-9_]*=[A-Za-z0-9_./:-]+$ ]]; then
+    echo "ERROR: --env requires literal NAME=value" >&2
+    exit 1
+  fi
+done
 
 set_job_names
 

@@ -23,7 +23,6 @@ spec:
         - nvidia
         - vllm
         - zeus
-        - profile6
       configOverrides:
         tests.rhaiis.run_benchmark: true
         tests.rhaiis.slack_user: "U08RXCZRRNF"
@@ -37,7 +36,7 @@ spec:
         tests.rhaiis.warmup: true
 
         rhaiis.engines.vllm.images.nvidia: "vllm/vllm-openai:v0.29.0"
-        tests.rhaiis.version: "vLLM-0.29.0-recipe-delete3"
+        tests.rhaiis.version: "vLLM-0.29.0-recipe-delete5"
 
         tests.rhaiis.model_key: custom
         models.custom.hf_model_id: "Qwen/Qwen3.8-27B"
@@ -51,4 +50,4 @@ spec:
         workloads.custom.rampup: 0
         workloads.custom.data: "prompt_tokens=128,output_tokens=128,turns=10,prefix_count=512,prefix_tokens=10000"
   env:
-    PULL_PULL_SHA: "e9fe12bfbee222ab45d0ce1daa085f241b8ed9f2"
+    PULL_PULL_SHA: "b115f4af2e0249457b6590edb9126a6b2bd1d36e"

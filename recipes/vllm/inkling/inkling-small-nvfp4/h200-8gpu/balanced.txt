@@ -1,0 +1,10 @@
+scenario: balanced
+export VLLM_USE_V2_MODEL_RUNNER=1
+export FLASH_ATTENTION_CUTE_DSL_CACHE_ENABLED=1
+vllm serve thinkingmachines/Inkling-Small-NVFP4 \
+  --trust-remote-code \
+  --tokenizer-mode inkling \
+  --kernel-config.enable_flashinfer_autotune=False \
+  --enable-expert-parallel \
+  --tensor-parallel-size 8 \
+  --enable-prefix-caching

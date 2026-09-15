@@ -1,0 +1,5 @@
+scenario: low-latency
+vllm serve meta-models/Muse-Glimmer-30B \
+  --generation-config auto \
+  --enable-prefix-caching \
+  --tensor-parallel-size 1

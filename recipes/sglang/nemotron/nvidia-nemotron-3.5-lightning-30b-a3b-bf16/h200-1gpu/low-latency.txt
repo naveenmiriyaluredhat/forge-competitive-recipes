@@ -1,0 +1,6 @@
+scenario: low-latency
+sglang serve \
+  --model-path nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16 \
+  --mamba-ssm-dtype float16 \
+  --mem-fraction-static 0.85 \
+  --cuda-graph-max-bs-decode 16

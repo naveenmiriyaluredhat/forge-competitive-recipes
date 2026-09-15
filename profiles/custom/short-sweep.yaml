@@ -1,8 +1,9 @@
 # Example: same Forge workloads with shorter, lower-rate measurement.
-workloads: [profile4, profile6]
-rates: [1, 4, 16]
-max_seconds: 120
+workloads: [custom]
+rates: [1,2,4,8,16,32,64,128,256,512]
+max_seconds: 450
 rampup: 0
 warmup: true
 config_overrides:
-  workloads.profile6.max_seconds: 180
+  workloads.custom.max_seconds: 450
+  workloads.custom.data: "prompt_tokens=128,output_tokens=128,turns=10,prefix_count=512,prefix_tokens=10000"

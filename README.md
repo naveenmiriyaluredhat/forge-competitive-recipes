@@ -36,7 +36,7 @@ Run the commands below from this repository. Relative configuration and recipe p
   --sha <forge-commit-sha>
 ```
 
-Supported families: `gemma`, `nemotron`, `qwen`, `laguna`, `glm`, `muse`. Runtime choices are `vllm` and `sglang`; scenarios are `low-latency`, `balanced`, and `throughput`. Omit a filter to include all values. Filters combine; no matches is an error. Family and runtime are inferred from recipe contents. Add new family mappings in `scripts/run.py` when introducing a new family.
+Supported families: `gemma`, `nemotron`, `qwen`, `laguna`, `glm`, `muse`, `meta`, `kimi`, `inkling`, `granite`. Runtime choices are `vllm` and `sglang`; scenarios are `low-latency`, `balanced`, and `throughput`. Omit a filter to include all values. Filters combine; no matches is an error. Family comes from the supported family folder when present, with model-ID inference as a fallback. Runtime is inferred from the serve command. Add new family mappings in `scripts/run.py` when introducing a new family.
 
 **An unfiltered invocation generates all text recipes, including preserved variants.** Use `--list` or exact `--recipe` selection before large launches.
 
@@ -165,3 +165,5 @@ bash -n scripts/*.sh
 Tests use a fake oc client; they do not create cluster jobs.
 
 Generated jobs follow the YAML layout in `archive/imported-jobs/rhaiis-g4-26b-a4b-bal.yaml`: scenario comment, indented Forge arguments, inline workload/rate lists, quoted configuration strings, and separated setting groups. Selected profile values and run-tracking labels are retained.
+
+Recipe files may include literal `export NAME=value` lines before the serve command. The generators map these to string-valued `rhaiis.env_vars.NAME` configuration overrides for the model server. Shell expansion is not supported in these exports.

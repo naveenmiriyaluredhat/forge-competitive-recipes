@@ -1,0 +1,6 @@
+workloads: [profile4]
+rates: [1, 2, 4, 8, 16, 32, 64, 128, 256]
+max_seconds: 450
+rampup: 0
+warmup: true
+config_overrides: {}

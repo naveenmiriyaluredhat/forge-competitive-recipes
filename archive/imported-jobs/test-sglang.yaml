@@ -39,7 +39,7 @@ spec:
         rhaiis.engines.sglang.args.tp-size: 1
 
         rhaiis.engines.sglang.images.nvidia: lmsysorg/sglang:v0.5.18
-        tests.rhaiis.version: "sglang-0.5.18-recipe-delete5"
+        tests.rhaiis.version: "sglang-0.5.18-recipe-delete6"
 
         tests.rhaiis.model_key: custom
         rhaiis.engine: sglang

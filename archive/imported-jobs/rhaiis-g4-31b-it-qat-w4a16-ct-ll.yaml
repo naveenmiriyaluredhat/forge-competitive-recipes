@@ -54,4 +54,4 @@ spec:
         workloads.profile6.max_seconds: 450
         workloads.profile6.rampup: 0
   env:
-    PULL_PULL_SHA: "2fdde7605ae5817792c78d1e464d4a56ae7069a6"
+    PULL_PULL_SHA: "forge-rhaiis-v0.0.6"

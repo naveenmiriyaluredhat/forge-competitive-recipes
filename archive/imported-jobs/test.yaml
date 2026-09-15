@@ -2,17 +2,17 @@
 apiVersion: fournos.dev/v1
 kind: FournosJob
 metadata:
-  generateName: rhaiis-laguna-s-21-ll-
+  generateName: rhaiis-q38-27b-sglang-ll-
 spec:
   owner: nmiriyal
-  displayName: rhaiis-laguna-s-21-ll
+  displayName: rhaiis-q38-27b-sglang-ll
   pipeline: forge-full
   exclusive: false
   cluster: zeus
   priority: manual
   hardware:
     gpuType: h200
-    gpuCount: 8
+    gpuCount: 1
   secretRefs:
   - psap-forge-dashboard-s3
   - psap-forge-notifications
@@ -21,38 +21,34 @@ spec:
       project: rhaiis
       args:
         - nvidia
-        - vllm
+        - sglang
         - zeus
-        - profile4
-        - profile6
       configOverrides:
         tests.rhaiis.run_benchmark: true
         tests.rhaiis.slack_user: "U08RXCZRRNF"
         tests.rhaiis.slack_notify_always: true
         caliper.postprocess.csv_dashboard.enabled: true
-        rhaiis.profiler.enabled: false
+        rhaiis.profiler.enabled: true
         rhaiis.agent_analysis.enabled: false
         rhaiis.deploy.image_pull_secrets: ["npalaska-image-pull"]
 
         benchmarks.guidellm.fs_group: 0
         tests.rhaiis.warmup: true
+        models.custom.hf_model_id: "Qwen/Qwen3.8-27B"
+        rhaiis.engines.sglang.args.tp-size: 1
 
-        rhaiis.engines.vllm.images.nvidia: "vllm/vllm-openai:v0.29.0"
-        tests.rhaiis.version: "vLLM-0.29.0-random-test"
+        rhaiis.engines.sglang.images.nvidia: lmsysorg/sglang:v0.5.18
+        tests.rhaiis.version: "sglang-0.5.18-recipe-delete7"
 
         tests.rhaiis.model_key: custom
-        rhaiis.engine: vllm
-        models.custom.hf_model_id: "poolside/Laguna-S-2.1"
-        rhaiis.engines.vllm.args.trust-remote-code: true
-        rhaiis.engines.vllm.args.enable-prefix-caching: true
-        rhaiis.engines.vllm.args.tensor-parallel-size: 8
+        rhaiis.engine: sglang
+        rhaiis.engines.sglang.args.tp-size: 1
+        rhaiis.engines.sglang.args.mem-fraction-static: 0.85
 
-        tests.rhaiis.workload_keys: ["profile4","profile6"]
-        workloads.profile4.rates: [1,2]
-        workloads.profile4.max_seconds: 100
-        workloads.profile4.rampup: 0
-        workloads.profile6.rates: [1,2]
-        workloads.profile6.max_seconds: 100
-        workloads.profile6.rampup: 0
+        tests.rhaiis.workload_keys: ["custom"]
+        workloads.custom.rates: [1]
+        workloads.custom.max_seconds: 300
+        workloads.custom.rampup: 0
+        workloads.custom.data: "prompt_tokens=128,output_tokens=128,turns=10,prefix_count=512,prefix_tokens=10000"
   env:
-    PULL_PULL_SHA: "2fdde7605ae5817792c78d1e464d4a56ae7069a6"
+    PULL_PULL_SHA: "b115f4af2e0249457b6590edb9126a6b2bd1d36e"
